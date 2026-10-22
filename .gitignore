@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+
+# Genesis workflow state stays local
+.genesis/
