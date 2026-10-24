@@ -4,3 +4,6 @@ __pycache__/
 
 # Genesis workflow state stays local
 .genesis/
+
+# Generated pipeline output (already-committed files stay tracked)
+data/
