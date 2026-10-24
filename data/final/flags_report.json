@@ -1,0 +1,1099 @@
+{
+  "records": [
+    {
+      "claim_id": "CLM-424063",
+      "flags": [
+        {
+          "code": "truncated",
+          "field": "raw_text",
+          "message": "the claim text ends mid-sentence",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "police_date_mismatch",
+          "field": "incident_description.police_report_number",
+          "message": "PR-20250822-4864 vs incident 2024-04-22",
+          "severity": "Warning"
+        }
+      ],
+      "id": "rec-001",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-748422",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-002",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-255335",
+      "flags": [
+        {
+          "code": "channel_inferred",
+          "field": "header.channel",
+          "message": "no channel tag; inferred from wording",
+          "severity": "Info"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-003",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-988147",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "incident_outside_policy_window",
+          "field": "header.incident_date",
+          "message": "2025-08-30 is outside 2023-11-19..2025-05-31",
+          "severity": "Info"
+        }
+      ],
+      "id": "rec-004",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-597471",
+      "flags": [
+        {
+          "code": "truncated",
+          "field": "raw_text",
+          "message": "the claim text ends mid-sentence",
+          "severity": "Warning"
+        },
+        {
+          "code": "weekday_mismatch",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "not_traceable",
+          "field": "insured_objects[0].location_address",
+          "message": "7400 Pine Rd, Arlington",
+          "severity": "Warning"
+        }
+      ],
+      "id": "rec-005",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-509317",
+      "flags": [
+        {
+          "code": "channel_inferred",
+          "field": "header.channel",
+          "message": "no channel tag; inferred from wording",
+          "severity": "Info"
+        },
+        {
+          "code": "weekday_mismatch",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-006",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-860535",
+      "flags": [
+        {
+          "code": "incident_date_conflict",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-007",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-699674",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "not_traceable",
+          "field": "insured_objects[0].location_address",
+          "message": "9600 Church Street, Georgetown",
+          "severity": "Warning"
+        }
+      ],
+      "id": "rec-008",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-531517",
+      "flags": [
+        {
+          "code": "truncated",
+          "field": "raw_text",
+          "message": "the claim text ends mid-sentence",
+          "severity": "Warning"
+        },
+        {
+          "code": "channel_inferred",
+          "field": "header.channel",
+          "message": "no channel tag; inferred from wording",
+          "severity": "Info"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-009",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-692408",
+      "flags": [
+        {
+          "code": "holder_inferred",
+          "field": "policy_details.policyholder_name",
+          "message": "holder differs from the caller",
+          "severity": "Info"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "not_traceable",
+          "field": "policy_details.policyholder_name",
+          "message": "'William Garcia' not found in the claim text",
+          "severity": "Warning"
+        }
+      ],
+      "id": "rec-010",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-884860",
+      "flags": [
+        {
+          "code": "channel_inferred",
+          "field": "header.channel",
+          "message": "no channel tag; inferred from wording",
+          "severity": "Info"
+        },
+        {
+          "code": "incident_date_conflict",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-011",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-462584",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-012",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-834090",
+      "flags": [
+        {
+          "code": "incident_date_conflict",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-013",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-696349",
+      "flags": [
+        {
+          "code": "truncated",
+          "field": "raw_text",
+          "message": "the claim text ends mid-sentence",
+          "severity": "Warning"
+        },
+        {
+          "code": "weekday_mismatch",
+          "field": "07_incident_date",
+          "message": "raised by 07_incident_date",
+          "severity": "Warning"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-014",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-405338",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-015",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-741209",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "incident_outside_policy_window",
+          "field": "header.incident_date",
+          "message": "2025-09-08 is outside 2024-07-15..2025-07-14",
+          "severity": "Info"
+        }
+      ],
+      "id": "rec-016",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-512907",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "incident_outside_policy_window",
+          "field": "header.incident_date",
+          "message": "2025-09-09 is outside 2023-05-01..2025-04-30",
+          "severity": "Info"
+        }
+      ],
+      "id": "rec-017",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-624817",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-018",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-205311",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-019",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-930672",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-020",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-144512",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-021",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-772093",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-022",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-390871",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "incident_outside_policy_window",
+          "field": "header.incident_date",
+          "message": "2025-09-14 is outside 2024-08-01..2025-07-31",
+          "severity": "Info"
+        }
+      ],
+      "id": "rec-023",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-551092",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-024",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-229871",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-025",
+      "worst": "Error"
+    },
+    {
+      "claim_id": null,
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-026",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-320198",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-027",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-440882",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-028",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-773011",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "incident_outside_policy_window",
+          "field": "header.incident_date",
+          "message": "2025-09-17 is outside 2024-02-01..2025-01-31",
+          "severity": "Info"
+        }
+      ],
+      "id": "rec-029",
+      "worst": "Error"
+    },
+    {
+      "claim_id": "CLM-664028",
+      "flags": [
+        {
+          "code": "llm_unavailable",
+          "field": "08_types",
+          "message": "raised by 08_types",
+          "severity": "Error"
+        },
+        {
+          "code": "llm_unavailable",
+          "field": "09_damage",
+          "message": "raised by 09_damage",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.incident_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        },
+        {
+          "code": "missing_required",
+          "field": "incident_description.location_type",
+          "message": "required enum is null",
+          "severity": "Error"
+        }
+      ],
+      "id": "rec-030",
+      "worst": "Error"
+    }
+  ],
+  "summary": {
+    "by_code": {
+      "channel_inferred": 4,
+      "holder_inferred": 1,
+      "incident_date_conflict": 3,
+      "incident_outside_policy_window": 5,
+      "llm_unavailable": 60,
+      "missing_required": 60,
+      "not_traceable": 3,
+      "police_date_mismatch": 1,
+      "truncated": 4,
+      "weekday_mismatch": 3
+    },
+    "by_severity": {
+      "Error": 120,
+      "Info": 10,
+      "Warning": 14
+    },
+    "records": 30,
+    "records_with_flags": 30
+  }
+}
