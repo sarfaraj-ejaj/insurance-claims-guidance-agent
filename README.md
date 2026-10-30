@@ -1,10 +1,10 @@
 # Insurance Claims Extraction
 
-Turns free-text insurance claim reports (email, phone transcript, portal form, in-person intake) into **consistent, validated JSON records** — "golden data" for evaluating and fine-tuning extraction models.
+Turns free-text insurance claim reports (email, phone transcript, portal form, in-person intake) into **consistent, validated JSON records** — "golden data" — and then into **de-identified train / validation files** ready for supervised fine-tuning of an extraction model.
 
 Every step is its own small module with its own tests, writes its own output file, and never guesses: a value that is not stated (or derivable) in the claim is `null`, and anything doubtful is **flagged for a human reviewer** instead of being silently fixed.
 
-> **Status: working demo.** All 14 pipeline steps are built and tested (144 tests, no network). The two Claude-backed steps (incident type / location type, damage amount) are verified with a fake model only — see [Limitations](#limitations).
+> **Status: working demo.** The 14-step extraction pipeline and the 6-step fine-tuning preparation are built and tested (236 tests, no network). The two Claude-backed steps are verified with a fake model only, and the fine-tuning set is far too small to train a useful model — see [Limitations](#limitations).
 
 ---
 
@@ -13,25 +13,26 @@ Every step is its own small module with its own tests, writes its own output fil
 1. [What it does](#what-it-does)
 2. [Quick start](#quick-start)
 3. [Architecture](#architecture)
-4. [The pipeline steps](#the-pipeline-steps)
+4. [The extraction steps](#the-extraction-steps)
 5. [Data layout](#data-layout)
 6. [The golden record](#the-golden-record)
 7. [Validation and flags](#validation-and-flags)
 8. [How the LLM is used](#how-the-llm-is-used)
-9. [Design principles](#design-principles)
-10. [Measured accuracy](#measured-accuracy)
-11. [Testing](#testing)
-12. [Repository layout](#repository-layout)
-13. [Limitations](#limitations)
-14. [How this was built](#how-this-was-built)
+9. [Fine-tuning dataset preparation](#fine-tuning-dataset-preparation)
+10. [Design principles](#design-principles)
+11. [Measured accuracy](#measured-accuracy)
+12. [Testing](#testing)
+13. [Repository layout](#repository-layout)
+14. [Limitations](#limitations)
+15. [How this was built](#how-this-was-built)
 
 ---
 
 ## What it does
 
-**Input** — `insurance_claims.json`: 30 claims, each `{claim_text, ground_truth}` (downloaded from the public Hugging Face dataset `Cleanlab/insurance-claims-extraction` by `get_data.py`). The pipeline reads only `claim_text`; `ground_truth` is used by the tests, never by the pipeline.
+**Input** — `insurance_claims.json`: 30 claims, each `{claim_text, ground_truth}` (downloaded from the public Hugging Face dataset `Cleanlab/insurance-claims-extraction` by `get_data.py`). The extraction pipeline reads only `claim_text`; `ground_truth` is only read, never modified, and is used by the tests and the fine-tuning preparation.
 
-**Output** — one record per claim with this shape (full schema in the [ADR](adr-01-pipeline_decision.md) §2):
+**Output 1 — golden records.** One record per claim with this shape (full schema in the [ADR](adr-01-pipeline_decision.md) §2):
 
 ```json
 {
@@ -44,12 +45,15 @@ Every step is its own small module with its own tests, writes its own output fil
 
 plus the flags that tell a reviewer where to look.
 
+**Output 2 — fine-tuning files.** `train.jsonl` and `validation.jsonl` (80 / 20, no test set): chat-style examples whose names, addresses, VINs and ids are replaced by consistent fakes, produced and verified by an independent checker.
+
 ## Quick start
 
-Requirements: Python 3 (developed on 3.14). The pipeline itself uses only the standard library. On macOS/Linux use `python3` where this README says `py`.
+Requirements: Python 3 (developed on 3.14). Everything uses only the standard library, except live Claude calls (`pip install anthropic`). On macOS/Linux use `python3` where this README says `py`.
 
 ```bash
-py -m pipeline              # raw claims -> data/stages/ -> data/final/
+py -m pipeline              # 1. raw claims -> data/stages/ -> data/final/   (golden records)
+py -m pipeline.finetune     # 2. golden records -> data/finetune/            (train / validation)
 ```
 
 Without an API key every rule-based layer (header, claim ID, policy, dates, objects, police report) is complete, and the three Claude fields are `null` with an `llm_unavailable` error flag. To fill them:
@@ -60,12 +64,12 @@ export ANTHROPIC_API_KEY=...          # PowerShell: $env:ANTHROPIC_API_KEY = "..
 py -m pipeline                        # ~60 calls to claude-opus-5-5; answers are cached
 ```
 
-Options: `--raw PATH` (input file), `--out DIR` (default `data/`), `--no-llm` (skip steps 8–9).
+Options: `--raw PATH` (input file), `--out DIR` (default `data/`), `--no-llm` (skip steps 8–9; `pipeline` only).
 To run only the stage files: `py -m pipeline.run_stages [raw.json] [out_dir] [--llm]`.
 
-> Running with a key sends the claim text to Anthropic's API. Do not use real customer data unless that is acceptable for you.
+> Running `py -m pipeline` with a key sends the claim text to Anthropic's API. Do not use real customer data unless that is acceptable for you. `py -m pipeline.finetune` makes **no** network calls.
 
-Reruns are **byte-identical** and **keep any `review_notes` a human has written** in `data/final/golden.jsonl`.
+Reruns of both commands are **byte-identical**. `pipeline` keeps any `review_notes` a human has written in `data/final/golden.jsonl`; `pipeline.finetune` keeps your decisions in `data/review/decisions.jsonl`.
 
 ## Architecture
 
@@ -108,9 +112,9 @@ Three layers, each with one job:
 | **Orchestration** | `run_stages.py`, `store.py`, `__main__.py` | Run steps in order, persist each step's rows to `data/stages/NN_name.jsonl`, read earlier stages back from disk. |
 | **Assembly & output** | `step11` … `step13` | Join the stage rows into the ADR record, run the validation checks, write the final files. |
 
-Why files between steps: you can open any stage and see exactly what that step produced; a step can be rerun or replaced without touching the others; and a rerun is a plain diff.
+Why files between steps: you can open any stage and see exactly what that step produced; a step can be rerun or replaced without touching the others; and a rerun is a plain diff. The fine-tuning preparation follows the same idea ([below](#fine-tuning-dataset-preparation)).
 
-## The pipeline steps
+## The extraction steps
 
 Follows the written design in [`adr-01-pipeline_decision.md`](adr-01-pipeline_decision.md) (§5). Each step has its own tests in `tests/`.
 
@@ -136,13 +140,21 @@ Follows the written design in [`adr-01-pipeline_decision.md`](adr-01-pipeline_de
 ```
 insurance_claims.json        raw input - never modified
 data/
-  stages/                    one deterministic JSONL file per step
+  stages/                    one deterministic JSONL file per extraction step
     01_ingest.jsonl ... 10_police.jsonl
   final/
     golden.jsonl             the finished records (one per line)
     flags_report.json        records needing review, worst first
     derived.jsonl            is_active_at_incident per claim
   llm_cache/                 saved Claude answers (hash of model+prompt+schema)
+
+  audit/                     reports about the data (no training data)
+    field_agreement.json  conflicts.jsonl  profile.json  deid_report.json  readiness_report.json
+  review/                    ORIGINAL (unmasked) values + your decisions - keep private
+    reconciled.jsonl  excluded.jsonl  decisions.jsonl
+  finetune/                  MASKED files only - what you hand to a trainer
+    train.jsonl  validation.jsonl  split_manifest.json
+    deidentified.jsonl  examples.jsonl  examples_index.json
 ```
 
 A stage row holds only that step's fields, keyed by a stable id:
@@ -198,17 +210,96 @@ Only for the genuinely fuzzy fields (steps 8 and 9). Everything else is determin
 - **Fails safe:** no key, refusal, truncated or malformed answer, or an API error → the field is `null` with `llm_unavailable`. The refusal fallback (`fallbacks="default"`) is enabled.
 - **Provenance:** every LLM stage row records the `model` and `prompt_version`.
 
+## Fine-tuning dataset preparation
+
+`py -m pipeline.finetune` turns the golden records into train / validation files for **supervised fine-tuning** (instruction → JSON answer). It needs `data/final/golden.jsonl` (it runs the extraction first if that is missing) and makes no network calls.
+
+**The idea.** The dataset's `ground_truth` labels are the training targets. The pipeline's golden output is an *independent second opinion*: wherever the two disagree, the record is held back until a person decides. `ground_truth` is only ever read.
+
+```mermaid
+flowchart LR
+    G[("data/final/golden.jsonl")] --> A["1 audit"]
+    R[("insurance_claims.json\nground_truth")] --> A
+    A --> C["2 reconcile"]
+    D[/"data/review/decisions.jsonl\n(your decisions)"/] --> C
+    C -->|ready| X["3 de-identify"]
+    C -->|conflict| E[("data/review/excluded.jsonl")]
+    X --> P["4 export"] --> S["5 split 80/20"] --> K["6 independent checks"]
+    S --> T[("train.jsonl")]
+    S --> V[("validation.jsonl")]
+    K --> Q[("audit/readiness_report.json")]
+```
+
+| # | Step | Module | What it does |
+|---|---|---|---|
+| 1 | audit | `ft_audit.py` | Compares golden vs `ground_truth` field by field (`agree` / `conflict` / `pipeline_null` / `dataset_null`); class balance; personal-data inventory |
+| 2 | reconcile | `ft_reconcile.py` | One target per claim with per-field provenance. A conflict keeps the record **out** of the export until `decisions.jsonl` settles it. A missing Claude field is fine only when Claude has not run; if Claude ran and found nothing, that is a conflict |
+| 3 | de-identify | `ft_deid.py` | Consistent, format-preserving pseudonyms (below) in the text **and** the labels together |
+| 4 | export | `ft_export.py` | Chat-format examples, each target validated against the schema and vocabularies |
+| 5 | split | `ft_split.py` | Seeded 80 / 20 train / validation, stratified by incident type, no test set |
+| 6 | checks | `ft_check.py` | Independent verification of the final files; writes the readiness report |
+
+### What a training example looks like
+
+```json
+{"messages": [
+  {"role": "system",    "content": "You extract structured data from one insurance claim report. ... schema, allowed values, rules ..."},
+  {"role": "user",      "content": "<the de-identified claim text>"},
+  {"role": "assistant", "content": "{\"header\":{\"claim_id\":\"CLM-375976\", ... },\"incident_description\":{ ... }}"}
+]}
+```
+
+The files contain only `messages` — no flags, notes, provenance or internal ids.
+
+### De-identification
+
+| Replaced (consistently, same fake everywhere) | Kept |
+|---|---|
+| Person names — in the labels, anywhere in the text, people who appear only in the text (a neighbour, "Mrs. Garland", "her name was Tina"), and name typos | Dates (relative phrases like "Tuesday the 16th" depend on them) |
+| House number and street name (city stays) | Amounts, years, vehicle makes and models |
+| VINs, including "ends in …83745" hints | Cities |
+| Policy, claim, object and police-report numbers (a police number keeps its date part) | Enum labels |
+
+Fakes are drawn from a seeded hash, so reruns match and **no mapping table of originals is ever written**. Fake values are never words that already occur in the data. Masking uses placeholders, so a fake can never be replaced again by a later rule. The de-identifier also scans its own output for leftovers and for labels that masking cut loose from their text, and lists capitalised words it could not classify (`residual_candidates`) for a person to glance at.
+
+### Resolving conflicts
+
+Records whose two label sources disagree are listed in `data/review/excluded.jsonl` and printed by the command. To bring one back, add a line to `data/review/decisions.jsonl` and rerun:
+
+```json
+{"record": "rec-008", "field": "policy_details.coverage_type", "choose": "dataset", "by": "your name", "reason": "checked the claim"}
+```
+
+`choose` is `dataset`, `pipeline`, or `value` (then add `"value": ...`). `by` and `reason` are required. A record returns only when **every** conflicting field has a decision.
+
+### The independent checks
+
+`ft_check.py` works from the **final files** and the **original** values, and does not ask the de-identifier whether masking worked. Nine checks: `file_shape`, `schema`, `traceability` (every label found in its text before masking still is), `personal_data` (no original name, id, VIN, house number, street or police number — and no email/phone/SSN — in any file under `data/finetune/`), `duplicates`, `split`, `exclusions`, `determinism` (a fresh rebuild is byte-identical) and `size`. The tests corrupt a good export nine different ways and require each corruption to be caught. Verdict: `pass`, `pass_with_warnings` or `fail`; exit code `0` / `0` / `1` (`2` = could not run).
+
+### Result on the sample data
+
+| | |
+|---|---|
+| Claims | 30 |
+| Held back (conflicting labels) | 4 — rec-005, rec-008, rec-013, rec-015 |
+| Exported | 26 → **21 train / 5 validation** |
+| Replacements made | 186; 0 leftovers; 0 labels cut loose from their text |
+| Verdict | `pass_with_warnings` — the warning is the dataset size |
+
+With decisions recorded for the four held-back records the split becomes 24 / 6.
+
 ## Design principles
 
 These were fixed before any code was written (recorded as project invariants alongside `SPEC.md`) and are enforced by tests:
 
 1. **Never guess.** Not stated and not derivable → `null`.
 2. **Never invent a label.** An unfit situation is flagged, not forced into the nearest enum.
-3. **Raw text is immutable.** Work happens on a copy; `raw_text` is stored byte for byte.
+3. **Raw text is immutable.** Work happens on a copy; `raw_text` is stored byte for byte; `ground_truth` is only read.
 4. **Faithfulness.** Extract what is stated, even if the policy had expired.
 5. **Flag, don't fix.** Validation reports problems; a human decides.
 6. **Reproducible.** Same input → same bytes. LLM answers are cached and versioned.
 7. **Documented gaps.** Where a rule cannot match the dataset's label, the test lists the record and fails if the gap ever closes unnoticed.
+8. **Originals stay out of training data.** Unmasked values live only under `data/review/`; nothing under `data/finetune/` may contain one.
 
 ## Measured accuracy
 
@@ -228,20 +319,21 @@ The reference record in ADR §8 assembles into **exactly** the §8.3 golden outp
 
 **Steps 8 and 9 (Claude) have not been measured against live Claude** — the tests prove the wiring and the safety rules with a fake model. 25 of the 26 ground-truth damage amounts appear literally in the claim text; the exception (record 14, label 37098 vs "over $37,000") is deliberately rejected as untraceable.
 
+These known misses are exactly the records the fine-tuning audit holds back (rec-005, rec-008, rec-013, rec-015).
+
 ## Testing
 
-144 tests, standard library only, no network (Claude is replaced by a fake client).
+236 tests, standard library only, no network (Claude is replaced by a fake client). The full run takes about two minutes, mostly the de-identification rebuilds inside the checker tests.
 
 ```bash
-py -m unittest tests.test_step00_schema tests.test_step01_ingest tests.test_step02_header \
-  tests.test_step02_fix tests.test_step03_claim_id tests.test_step04_policy \
-  tests.test_step05_policy_dates tests.test_step06_objects tests.test_step07_incident_date \
-  tests.test_step08_types tests.test_step09_damage tests.test_step10_police \
-  tests.test_step11_validate tests.test_step12_output tests.test_step13_derived \
-  tests.test_run_stages tests.test_run_stages_llm tests.test_llm tests.test_main
+py -m unittest $(ls tests/test_*.py | sed 's#/#.#; s#\.py$##')           # bash / Git Bash
 ```
 
-(`unittest discover` is not used because `tests/` is a namespace package.) Shared fixtures — the ADR reference record and the 30 claims — live in `tests/test_step01_ingest.py`.
+```powershell
+py -m unittest (Get-ChildItem tests/test_*.py | ForEach-Object { "tests." + $_.BaseName })   # PowerShell
+```
+
+(`unittest discover` is not used because `tests/` is a namespace package.) Shared fixtures — the ADR reference record and the 30 claims — live in `tests/test_step01_ingest.py`. Each module can be run alone, e.g. `py -m unittest tests.test_ft_deid`.
 
 ## Repository layout
 
@@ -251,24 +343,28 @@ SPEC.md                      approved specification (FR-*, NFR-*, AC-*)
 get_data.py                  downloads the dataset (needs the `datasets` package)
 insurance_claims.json        the 30 raw claims
 pipeline/
-  __main__.py                `py -m pipeline` - end to end
+  __main__.py                `py -m pipeline` - raw claims -> golden records
+  finetune.py                `py -m pipeline.finetune` - golden records -> train/validation
   run_stages.py  store.py    stage runner and the JSONL stage store
   llm.py                     Claude client: cache, structured output, fail-safe
-  step00_schema.py ... step13_derived.py
-tests/                       one test module per step + runner/CLI/LLM tests
-data/                        generated output (stages/, final/, llm_cache/)
+  step00_schema.py ... step13_derived.py     the extraction steps
+  ft_audit.py ft_reconcile.py ft_deid.py ft_export.py ft_split.py ft_check.py     fine-tuning preparation
+tests/                       one test module per step, plus runner / CLI / LLM / fine-tuning tests
+data/                        generated output (stages/, final/, llm_cache/, audit/, review/, finetune/)
 AGENTS.md  CLAUDE.md         instructions for AI coding agents working in this repo
 ```
 
 ## Limitations
 
-- **Claude steps are unmeasured.** Incident type, location type and damage amount have not been run against live Claude yet; expect to review the first output.
+- **Claude steps are unmeasured.** Incident type, location type and damage amount have not been run against live Claude yet; expect to review the first output. Until then the fine-tuning targets for those fields come from the dataset labels alone, with no second opinion.
+- **The fine-tuning set is far too small.** 21 training examples cannot teach a model much (extraction usually needs hundreds to thousands). Treat it as an **evaluation set** first, or add many more claims. Seven incident types have a single example (kept in train, never validated), so the 5 validation examples cover only 5 types.
+- **De-identification is rule-based.** A person mentioned in a way the patterns miss stays in the text; the residual-candidate list (43 words on the sample, none of them person names) is a review aid, not a guarantee. Cities and dates are kept, public cross-street and business names (e.g. a store) are kept, and a partial id of someone else's policy (`POL-1938something`) stays. Do not treat the output as safe for real customer data without a human review.
 - **Rule-based extraction is tuned to this 30-claim sample.** It generalises through broad patterns and synthetic tests, but new phrasing will produce `null` or a flag rather than a wrong value — that is by design, not a guarantee of coverage.
-- **Single reviewer.** There is no second annotator, so the ADR's adjudication step is dropped; flags and traceability checks are the only safety net.
-- **The dataset's own label problems** (ADR §9) are out of scope: the pipeline neither corrects nor tracks them, and never edits `ground_truth`.
-- **Privacy.** With a key set, claim text goes to Anthropic. The cache and stage files contain claim text/derived data — treat `data/` accordingly.
-- **Staleness.** The committed files under `data/` are a snapshot from a run *without* an API key (Claude fields empty). Rerun with a key to refresh them.
+- **Single reviewer.** There is no second annotator, so the ADR's adjudication step is dropped; flags, traceability checks and `decisions.jsonl` are the only safety net.
+- **The dataset's own label problems** (ADR §9) are ignored by the extraction pipeline; the fine-tuning audit surfaces them and holds the affected records back. Nothing ever edits `ground_truth`.
+- **Privacy.** With a key set, claim text goes to Anthropic. `data/review/` holds unmasked values and the cache and stage files hold claim text — treat `data/` accordingly.
+- **Staleness.** The files committed under `data/` are a snapshot from a run *without* an API key (Claude fields empty). Rerun with a key to refresh them.
 
 ## How this was built
 
-Spec-first with the [Genesis](https://github.com/ayush488-glitch/genesis-kit) workflow: a written specification (`SPEC.md`, 14 functional / 5 non-functional requirements, 9 acceptance criteria) was approved before any code, then each pipeline step was built as its own gated task — tests first, then code, then a passing test gate. Medium-risk tasks (the Claude client and steps 8–9) also required an independent human review. The workflow state lives in a local `.genesis/` folder that is intentionally not committed.
+Spec-first with the [Genesis](https://github.com/ayush488-glitch/genesis-kit) workflow: a written specification (`SPEC.md`: 20 functional / 7 non-functional requirements, 14 acceptance criteria) was approved before any code, then every step was built as its own gated task — tests first, then code, then a passing test gate. The specification was amended once to add the fine-tuning preparation, which was approved again before any of that code was written. Medium-risk tasks (the Claude client, steps 8–9 and the de-identifier) also required an independent human review. 25 tasks were completed. The workflow state lives in a local `.genesis/` folder that is intentionally not committed.
